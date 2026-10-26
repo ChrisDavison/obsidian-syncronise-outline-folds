@@ -1,0 +1,9 @@
+{
+  "id": "synchronise-outline-folds",
+  "name": "Synchronise Outline Folds",
+  "version": "0.1.0",
+  "minAppVersion": "1.14.4",
+  "description": "Keep heading folds in the core Outline and the active document in sync.",
+  "author": "Chris Davison",
+  "isDesktopOnly": false
+}
