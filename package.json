@@ -1,6 +1,6 @@
 {
   "name": "synchronise-outline-folds",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Synchronise heading folds between the core Outline and the active Markdown document.",
   "license": "MIT",
@@ -10,8 +10,7 @@
     "build": "tsc --noEmit && node esbuild.config.mjs production",
     "lint": "eslint .",
     "test": "tsx --test tests/*.test.ts",
-    "check": "npm run lint && npm test && npm run build && node scripts/check-release.mjs",
-    "package": "npm run check && node scripts/package.mjs"
+    "check": "npm run lint && npm test && npm run build && node scripts/check-release.mjs"
   },
   "devDependencies": {
     "@codemirror/view": "^6.38.0",

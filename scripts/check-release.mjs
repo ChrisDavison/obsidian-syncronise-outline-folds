@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import process from 'node:process';
 const json = async path => JSON.parse(await readFile(path, 'utf8'));
 const manifest = await json('manifest.json');
 const pkg = await json('package.json');
@@ -10,6 +11,7 @@ assert.ok(!/obsidian|plugin/i.test(manifest.name));
 assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
 assert.equal(pkg.version, manifest.version);
 assert.equal(versions[manifest.version], manifest.minAppVersion);
+if (process.env.RELEASE_TAG) assert.equal(manifest.version, process.env.RELEASE_TAG, 'Release tag must match manifest version');
 assert.ok(manifest.description.length <= 250 && manifest.description.endsWith('.'));
 assert.equal(typeof manifest.isDesktopOnly, 'boolean');
 for (const name of ['README.md', 'LICENSE', 'main.js']) assert.ok((await readFile(name)).length > 0);

@@ -1,6 +1,8 @@
 name: Verify plugin
 on:
   push:
+    branches:
+      - '**'
   pull_request:
   workflow_dispatch:
 permissions:
@@ -17,4 +19,4 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run package
+      - run: npm run check

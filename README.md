@@ -26,10 +26,6 @@ Disabling the plugin removes its listeners and the extra Outline arrows. Existin
 3. Copy both files into that folder.
 4. Reload Obsidian, then enable **Synchronise Outline Folds** under **Settings → Community plugins**.
 
-The packaged ZIP contains the correctly named `synchronise-outline-folds` folder. Extract that folder into the vault's `plugins` folder. The source repository directory can retain the requested spelling `obsidian-syncronise-outline-folds`; the installation folder must match the manifest ID.
-
-This plugin has not yet been submitted to the community directory. There is no community search installation until its listing is accepted.
-
 ## Compatibility and privacy
 
 Requires Obsidian **1.14.4 or newer**. Desktop integration is verified on macOS with 1.14.4. The runtime uses browser and Obsidian APIs without Node.js or Electron imports, so mobile is permitted by the manifest; physical iOS and Android devices have not been tested.
@@ -48,12 +44,22 @@ Use Node.js 22 or newer and npm.
 npm ci
 npm run check      # official Obsidian ESLint rules, unit tests, typecheck, build, asset checks
 npm run dev        # watch source and rebuild main.js
-npm run package    # checks, installation folder, ZIP, and SHA-256 checksums in dist/
 ```
 
 `main.js` is generated and intentionally excluded from source control. The production build externalises Obsidian, CodeMirror, and Lezer, and emits readable CommonJS without source maps. The lockfile records development dependencies; none are shipped inside `main.js`.
 
-See [TESTING.md](TESTING.md) for the disposable-vault integration test and the recorded verification scope. See [RELEASING.md](RELEASING.md) for release and community submission steps.
+Unit tests cover heading boundaries, duplicate titles, preservation of nested/list/frontmatter folds, and unsupported core interfaces. Live verification on macOS with Obsidian 1.14.4 covered both directions in all three modes, multiple Outlines, file switching, and disable/re-enable cleanup.
+
+The optional live integration check requires a disposable vault at `/tmp/synchronise-outline-folds-test` containing `tests/Folds.md`, with the plugin and core Outline enabled. Keep its window in the foreground and run `node scripts/live-check.mjs` with the Obsidian CLI on PATH. It changes folds and modes, creates `Other.md`, and reloads the plugin; it refuses other vault paths.
+
+## Release provenance
+
+Tagged releases are built and checked by GitHub Actions. Only `main.js` and `manifest.json` are uploaded, with build attestations stored on GitHub. After downloading a release, verify either file with the GitHub CLI:
+
+```sh
+gh attestation verify main.js --repo ChrisDavison/obsidian-syncronise-outline-folds
+gh attestation verify manifest.json --repo ChrisDavison/obsidian-syncronise-outline-folds
+```
 
 ## License
 
