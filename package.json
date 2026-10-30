@@ -1,6 +1,6 @@
 {
   "name": "synchronise-outline-folds",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "Synchronise heading folds between the core Outline and the active Markdown document.",
   "license": "MIT",

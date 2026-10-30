@@ -34,3 +34,29 @@ export function changedFolds(before: ReadonlyMap<number, boolean>, after: Readon
 export function sameFolds(a: ReadonlySet<number>, b: ReadonlySet<number>): boolean {
   return a.size === b.size && [...a].every(line => b.has(line));
 }
+
+export interface NamedHeading extends Heading { text: string }
+
+/** Identify headings by level, title and repeat count so saved folds survive edits elsewhere in the note. */
+export function headingKeys(headings: readonly NamedHeading[]): Map<number, string> {
+  const seen = new Map<string, number>();
+  return new Map(headings.map(heading => {
+    const base = JSON.stringify([heading.level, heading.text]);
+    const count = seen.get(base) ?? 0;
+    seen.set(base, count + 1);
+    return [heading.line, `${base}#${count}`];
+  }));
+}
+
+export type SavedFolds = Record<string, string[]>;
+
+/** Accept only a path → heading-key list map; anything else from disk is discarded. */
+export function readSaved(data: unknown): SavedFolds {
+  const folds = typeof data === 'object' && data !== null ? (data as Record<string, unknown>).folds : null;
+  if (typeof folds !== 'object' || folds === null) return {};
+  const saved: SavedFolds = {};
+  for (const [path, keys] of Object.entries(folds)) {
+    if (Array.isArray(keys) && keys.every(key => typeof key === 'string')) saved[path] = [...keys];
+  }
+  return saved;
+}

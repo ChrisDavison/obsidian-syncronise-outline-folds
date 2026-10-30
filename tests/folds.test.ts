@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { changedFolds, headingRanges, mergeFolds, sameFolds } from '../src/folds.ts';
+import { changedFolds, headingKeys, headingRanges, mergeFolds, readSaved, sameFolds } from '../src/folds.ts';
 import { getMode, getOutline, readFolds } from '../src/compat.ts';
 import type { MarkdownView, View } from 'obsidian';
 
@@ -47,4 +47,23 @@ void test('invalid private fold interfaces fail closed', () => {
   for (const info of [{ lines: 2, folds: [{ from: 0, to: 3 }] }, { lines: 2, folds: [{ from: -1, to: 1 }] }, null]) {
     assert.equal(readFolds({ getFoldInfo: () => info, applyFoldInfo: () => {} }), null);
   }
+});
+
+void test('saved heading keys follow headings when lines move and keep repeated titles apart', () => {
+  const before = headingKeys([
+    { line: 0, endLine: 0, level: 1, text: 'Notes' }, { line: 4, endLine: 4, level: 2, text: 'Notes' },
+    { line: 8, endLine: 8, level: 2, text: 'Notes' },
+  ]);
+  const after = headingKeys([
+    { line: 2, endLine: 2, level: 1, text: 'Notes' }, { line: 9, endLine: 9, level: 2, text: 'Notes' },
+    { line: 15, endLine: 15, level: 2, text: 'Notes' },
+  ]);
+  assert.equal(new Set(before.values()).size, 3);
+  assert.deepEqual([...before.values()], [...after.values()]);
+});
+
+void test('malformed saved data is discarded', () => {
+  assert.deepEqual(readSaved(null), {});
+  assert.deepEqual(readSaved({ folds: 'x' }), {});
+  assert.deepEqual(readSaved({ folds: { 'a.md': ['k'], 'b.md': [1], 'c.md': 'k' } }), { 'a.md': ['k'] });
 });
